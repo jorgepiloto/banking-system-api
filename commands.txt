@@ -1,0 +1,11 @@
+# Create a new account
+curl -X POST -H "Content-Type: application/json" -d '{"owner": "Alice", "balance": 100.0}' http://localhost:5000/accounts
+
+# Check account status
+curl -X GET http://localhost:5000/accounts/1
+
+# Deposit amount in account
+curl -X PUT -H "Content-Type: application/json" -d '{"amount": 50.0}' http://localhost:5000/accounts/1/deposit
+
+# Withdraw amount in account
+curl -X PUT -H "Content-Type: application/json" -d '{"amount": 20.0}' http://localhost:5000/accounts/1/withdraw

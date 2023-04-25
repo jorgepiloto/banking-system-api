@@ -1,0 +1,51 @@
+#!.venv/bin/python
+
+import argparse
+import requests
+
+# define the base URL for the API
+base_url = 'http://127.0.0.1:5000'
+
+# create an argument parser to handle the command line flags
+parser = argparse.ArgumentParser()
+parser.add_argument('--create-account', action='store_true', help='create a new bank account')
+parser.add_argument('--deposit', action='store_true', help='deposit money into an account')
+parser.add_argument('--withdraw', action='store_true', help='withdraw money from an account')
+parser.add_argument('owner', type=str, help='name of the account owner')
+parser.add_argument('amount', type=float, help='amount of money to deposit or withdraw')
+parser.add_argument('account_id', type=int, nargs='?', help='ID of the account to deposit or withdraw from (optional)')
+
+# parse the command line arguments
+args = parser.parse_args()
+
+# if the create-account flag is set, create a new account
+if args.create_account:
+    url = f'{base_url}/accounts'
+    data = {'owner': args.owner, 'balance': args.amount}
+    response = requests.post(url, json=data)
+    print(response.json()['message'])
+
+# if the deposit flag is set, deposit money into an account
+elif args.deposit:
+    if args.account_id is None:
+        print('Error: account ID required for deposit')
+    else:
+        url = f'{base_url}/accounts/{args.account_id}/deposit'
+        data = {'amount': args.amount}
+        response = requests.put(url, json=data)
+        print(response.json()['message'])
+
+# if the withdraw flag is set, withdraw money from an account
+elif args.withdraw:
+    if args.account_id is None:
+        print('Error: account ID required for withdrawal')
+    else:
+        url = f'{base_url}/accounts/{args.account_id}/withdraw'
+        data = {'amount': args.amount}
+        response = requests.put(url, json=data)
+        print(response.json()['message'])
+
+# if no flags are set, print an error message
+else:
+    print('Error: at least one flag (--create-account, --deposit, or --withdraw) is required')
+
